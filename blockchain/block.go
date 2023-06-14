@@ -9,20 +9,16 @@ import (
 
 type (
 	Block struct {
-		BlockHeader  *BlockHeader `json:"block_header"`
-		Transactions []Transaction	`json:"transactions"`
-	}
-
-	Blockchain struct {
-		Chain []*Block `json:"block_chain"`
+		BlockHeader  *BlockHeader  `json:"block_header"`
+		Transactions []Transaction `json:"transactions"`
 	}
 
 	BlockHeader struct {
-		MerkleRoot []byte		`json:"merkle_root"`
-		PrevHash   []byte		`json:"prev_block_hash"`
-		Hash       []byte		`json:"block_hash"`
-		Timestamp  time.Time	`json:"block_timestamp"`
-		Height     int			`json:"block_height"`
+		MerkleRoot []byte    `json:"merkle_root"`
+		PrevHash   []byte    `json:"prev_block_hash"`
+		Hash       []byte    `json:"block_hash"`
+		Timestamp  time.Time `json:"block_timestamp"`
+		Height     int       `json:"block_height"`
 	}
 )
 
@@ -53,12 +49,8 @@ func CreateBlockHeader(prevHash, merkleRoot []byte, time_stamp time.Time, height
 	return bHeader
 }
 
-func CreateGenesisBlock() *Block{
+func CreateGenesisBlock() *Block {
 	return CreateBlock(nil, nil, 0)
-}
-
-func InitializeChain() *Blockchain {
-	return &Blockchain{[]*Block{CreateGenesisBlock()}}
 }
 
 
@@ -66,9 +58,9 @@ func GenesisBlock() *Block {
 	return nil
 }
 
-func (bl *Blockchain) AddBlock(block *Block){
-	prevBlock := bl.Chain[len(bl.Chain) - 1]
-	newBlock := CreateBlock(nil, prevBlock.BlockHeader.Hash, prevBlock.BlockHeader.Height + 1)
+func (bl *Blockchain) AddBlock(block *Block) {
+	prevBlock := bl.Chain[len(bl.Chain)-1]
+	newBlock := CreateBlock(nil, prevBlock.BlockHeader.Hash, prevBlock.BlockHeader.Height+1)
 	bl.Chain = append(bl.Chain, newBlock)
 }
 
