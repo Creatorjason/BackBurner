@@ -9,20 +9,20 @@ import (
 
 type (
 	Block struct {
-		BlockHeader  *BlockHeader
-		Transactions []Transaction
+		BlockHeader  *BlockHeader `json:"block_header"`
+		Transactions []Transaction	`json:"transactions"`
 	}
 
 	Blockchain struct {
-		Blocks []*Block
+		Chain []*Block `json:"block_chain"`
 	}
 
 	BlockHeader struct {
-		MerkleRoot []byte
-		PrevHash   []byte
-		Hash       []byte
-		Timestamp  time.Time
-		Height     int
+		MerkleRoot []byte		`json:"merkle_root"`
+		PrevHash   []byte		`json:"prev_block_hash"`
+		Hash       []byte		`json:"block_hash"`
+		Timestamp  time.Time	`json:"block_timestamp"`
+		Height     int			`json:"block_height"`
 	}
 )
 
@@ -53,20 +53,23 @@ func CreateBlockHeader(prevHash, merkleRoot []byte, time_stamp time.Time, height
 	return bHeader
 }
 
-func InitializeChain() *Blockchain {
-	return nil
+func CreateGenesisBlock() *Block{
+	return CreateBlock(nil, nil, 0)
 }
 
-func CreateTransaction() *Transaction {
-	return nil
+func InitializeChain() *Blockchain {
+	return &Blockchain{[]*Block{CreateGenesisBlock()}}
 }
+
 
 func GenesisBlock() *Block {
 	return nil
 }
 
-func (bl *Blockchain) AddBlockHeader() *BlockHeader {
-	return nil
+func (bl *Blockchain) AddBlock(block *Block){
+	prevBlock := bl.Chain[len(bl.Chain) - 1]
+	newBlock := CreateBlock(nil, prevBlock.BlockHeader.Hash, prevBlock.BlockHeader.Height + 1)
+	bl.Chain = append(bl.Chain, newBlock)
 }
 
 func (bh *BlockHeader) SerializeBH() []byte {

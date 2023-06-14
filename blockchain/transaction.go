@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/gob"
 	"errors"
+	"strconv"
 
 	mk "github.com/cbergoon/merkletree"
 )
@@ -67,4 +68,18 @@ func GetMerkleRoot(trxs []Transaction) []byte{
 		panic(err)
 	}
 	return mTree.MerkleRoot()
+}
+
+func CreateTransaction(from, to []byte, amount int) Transaction{
+	// Hash of transaction data
+	trx := Transaction{
+		SenderAddr : from,
+		ReceiverAddr: to,
+		Amount : amount,
+	}
+	amountStr := strconv.Itoa(amount)
+	b := bytes.Join([][]byte{from, to, []byte(amountStr)}, []byte{})
+	hash := sha256.Sum256(b)
+	trx.ID = hash[:]
+	return trx
 }
