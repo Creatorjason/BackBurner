@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/gob"
 	"errors"
+	"fmt"
 	"strconv"
 
 	mk "github.com/cbergoon/merkletree"
@@ -45,7 +46,7 @@ func (trx Transaction) Equals(other mk.Content) (bool, error) {
 	if err != nil {
 		return false, errors.New("value is not of type Transaction")
 	}
-	trxHash, _ :=  trx.CalculateHash()
+	trxHash, _ := trx.CalculateHash()
 	return string(trxHash) == string(otherTrx), nil
 }
 
@@ -58,28 +59,34 @@ func (trx Transaction) SerializeTrx() []byte {
 	return buff.Bytes()
 }
 
-func GetMerkleRoot(trxs []Transaction) []byte{
+func GetMerkleRoot(trxs []Transaction) []byte {
 	var trxArray []mk.Content
-	for _, trx := range trxs{
-		trxArray =  append(trxArray, trx)
+	for _, trx := range trxs {
+		trxArray = append(trxArray, trx)
 	}
 	mTree, err := mk.NewTree(trxArray)
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
 	return mTree.MerkleRoot()
 }
 
-func CreateTransaction(from, to []byte, amount int) Transaction{
+func CreateTransaction(from, to []byte, amount int) Transaction {
 	// Hash of transaction data
 	trx := Transaction{
-		SenderAddr : from,
+		SenderAddr:   from,
 		ReceiverAddr: to,
-		Amount : amount,
+		Amount:       amount,
 	}
 	amountStr := strconv.Itoa(amount)
 	b := bytes.Join([][]byte{from, to, []byte(amountStr)}, []byte{})
 	hash := sha256.Sum256(b)
 	trx.ID = hash[:]
 	return trx
+}
+
+func AddTransactionToMempool(trx Transaction) {
+	memPool := GetMempool()
+	memPool.TempStore = append(memPool.TempStore, trx)
+	fmt.Printf("transaction %v, added to mempool", trx.ID)
 }

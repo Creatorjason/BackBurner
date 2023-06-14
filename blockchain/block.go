@@ -49,8 +49,13 @@ func CreateBlockHeader(prevHash, merkleRoot []byte, time_stamp time.Time, height
 	return bHeader
 }
 
+
 func CreateGenesisBlock() *Block {
-	return CreateBlock(nil, nil, 0)
+	// for testing purpose
+	trx1 := CreateTransaction([]byte("Jason"),[]byte("Qoinpal"),100)
+	trx2 := CreateTransaction([]byte("Kendrick"), []byte("Dayo"), 200)
+	// testing...
+	return CreateBlock([]Transaction{trx1, trx2}, nil, 0)
 }
 
 
@@ -58,11 +63,6 @@ func GenesisBlock() *Block {
 	return nil
 }
 
-func (bl *Blockchain) AddBlock(block *Block) {
-	prevBlock := bl.Chain[len(bl.Chain)-1]
-	newBlock := CreateBlock(nil, prevBlock.BlockHeader.Hash, prevBlock.BlockHeader.Height+1)
-	bl.Chain = append(bl.Chain, newBlock)
-}
 
 func (bh *BlockHeader) SerializeBH() []byte {
 	buff := new(bytes.Buffer)
