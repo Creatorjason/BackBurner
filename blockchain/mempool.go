@@ -16,7 +16,7 @@ import (
 // Mempool will be in RAM for now
 // TODO: Implement a way to either backtrack and gather previous transactions stored in mempool, if RAM is comprised
 // TODO: or a method to replicate across multiple RAM or persist on DISK >>>> {Thinking out loud 💨💨}
-const MAX_MEMPOOL_CAP = 1
+const MAX_MEMPOOL_CAP = 2
 
 type Mempool struct {
 	MaxCap    int
@@ -58,12 +58,12 @@ func (mp *Mempool) AddTransaction(trx Transaction) {
 		fmt.Println("Transactions added to mempool")
 	} else {
 		// LOGIC to empty tempStore
-		mp.EmptyMemPool()
 		// For now I will call a trigger function from the blockchain here
 		//  to cause chain to process incoming message from event stream
+		mp.EmptyMemPool()
 		stop := make(chan struct{})
 		defer close(stop)
-		go StartDataProcessing(stop)
+		StartDataProcessing(stop)
 		stop <- struct{}{}
 		fmt.Println("⭕️ Emptied mempool")
 	}
@@ -78,10 +78,9 @@ func (mp *Mempool) EmptyMemPool() {
 	tempStoreCopy := make([]Transaction, len(mp.TempStore))
 	copy(tempStoreCopy, mp.TempStore)
 	// original TempStore
-	fmt.Printf("....Tempstore before %#v\n", mp.TempStore)
+	
 	mp.TempStore = nil
-	fmt.Println(".....Tempstore after", mp.TempStore)
-	fmt.Println("....TempStoreCopy", tempStoreCopy)
+	
 	// publish "mempool.full" topic
 	payload := SerializeTrxArray(tempStoreCopy)
 	mp.EventStream.PublishMessage(payload, "mempool.full")

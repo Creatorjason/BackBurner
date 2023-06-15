@@ -44,7 +44,7 @@ func NewChannel() *gochannel.GoChannel {
 }
 
 func (ev *EventStream) PublishMessage(payload []byte, topic string) {
-		
+	
 		msg := message.NewMessage(watermill.NewUUID(), payload)
 		err := ev.Stream.Publish(topic, msg)
 		if err != nil {
@@ -52,6 +52,8 @@ func (ev *EventStream) PublishMessage(payload []byte, topic string) {
 		}
 		time.Sleep(time.Second)
 		fmt.Println("✅ publishing service started...")
+	
+
 		
 		// fmt.Println(payload)
 	
@@ -69,7 +71,7 @@ func (ev *EventStream) SubscribeMessage(ctx context.Context, topic string) <-cha
 
 func (ev *EventStream) Process(messages <-chan *message.Message) {
 	for msg := range messages {
-		fmt.Printf("received message: %s, payload: %s\n", msg.UUID, string(msg.Payload))
+		// fmt.Printf("received message: %s, payload: %s\n", msg.UUID, string(msg.Payload))
 		msg.Ack()
 	}
 }
