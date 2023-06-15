@@ -1,8 +1,11 @@
 package blockchain
 
 import (
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"sync"
+	ev "github.com/qoinpalhq/HQ_CHAIN/events"
 )
 
 // In this implementation
@@ -18,34 +21,39 @@ const MAX_MEMPOOL_CAP = 2
 type Mempool struct {
 	MaxCap    int
 	TempStore []Transaction
-	// Empty channel used ny Mempool to empty temp store to chain
-	EmpChan chan []Transaction
-	// Notifier, simply tells chain of the available of a transaction array
-	Notifier chan bool
+	EventStream *ev.EventStream
 }
 
 var (
 	singleMempoolInstance *Mempool
 	once                  sync.Once
-	// notifier              chan string
-	// empChan               chan []Transaction
 )
 
-func NewMempool(empChan chan []Transaction, notifier chan bool) *Mempool {
+func NewMempool(eventStream *ev.EventStream) *Mempool {
 	tempStore := make([]Transaction, 0)
 	return &Mempool{
 		TempStore: tempStore,
-		EmpChan:   empChan,
-		Notifier:  notifier,
 		MaxCap:    MAX_MEMPOOL_CAP,
+		EventStream: eventStream,
 	}
 }
+func GetSingleMempoolInstance(eventStream *ev.EventStream) *Mempool {
+	if singleMempoolInstance == nil {
+		once.Do(func() {
+			singleMempoolInstance = NewMempool(eventStream)
+			fmt.Println("✅ New Mempool created!")
+		})
+	} else {
+		fmt.Println("💡 Mempool already created")
+	}
+	return singleMempoolInstance
+}
+
 
 // function is called when a new transaction is created
 func (mp *Mempool) AddTransaction(trx Transaction) {
 	// before adding check if length of tempStore is less than MAX_MEMPOOL_CAP
-	
-	if mp.IsMempoolFull() {
+	if !mp.IsMempoolFull() {
 		mp.TempStore = append(mp.TempStore, trx)
 		fmt.Println("Transactions add to mempool")
 	} else {
@@ -56,38 +64,50 @@ func (mp *Mempool) AddTransaction(trx Transaction) {
 
 }
 
-func (mp *Mempool) RemoveTransaction() {
-	// TO IMPLEMENT
-}
 
-func (mp *Mempool) SortTransactionByID() {
-	// TO IMPLEMENT
-}
 
-func (mp *Mempool) IsMempoolFull() bool {
-	return len(mp.TempStore) < mp.MaxCap
-}
-
+// Mempool publishes to this topic "mempool.full"
 func (mp *Mempool) EmptyMemPool() {
 	// copy all the transactions in TempStore
 	tempStoreCopy := make([]Transaction, len(mp.TempStore))
 	copy(tempStoreCopy, mp.TempStore)
 	// original TempStore
 	mp.TempStore = nil
-	// set through channel
-	mp.EmpChan <- tempStoreCopy
-	// notify chain
-	mp.Notifier <- true
+	// publish "mempool.full" topic
+	payload := SerializeTrxArray(tempStoreCopy)
+	mp.EventStream.PublishMessage(payload, "mempool.full")
+	
+
 }
 
-func GetMempool(empChan chan []Transaction, notifier chan bool) *Mempool {
-	if singleMempoolInstance == nil {
-		once.Do(func() {
-			singleMempoolInstance = NewMempool(empChan, notifier)
-			fmt.Println("✅ New Mempool created!")
-		})
-	} else {
-		fmt.Println("💡 Mempool already created")
+
+
+// serializes the  transaction array mempool
+func SerializeTrxArray(tempStoreCpy []Transaction) []byte {
+	buff := new(bytes.Buffer)
+	err := gob.NewEncoder(buff).Encode(&tempStoreCpy)
+	if err != nil {
+		panic(err)
 	}
-	return singleMempoolInstance
+	return buff.Bytes()
+}
+
+func DeserializeTxArray(data []byte) []Transaction {
+	var trxArr []Transaction
+	err := gob.NewDecoder(bytes.NewReader(data)).Decode(&trxArr)
+	if err != nil {
+		panic(err)
+	}
+	return trxArr
+}
+func (mp *Mempool) IsMempoolFull() bool {
+	return len(mp.TempStore) >= mp.MaxCap
+}
+
+func (mp *Mempool) RemoveTransaction() {
+	// TO IMPLEMENT
+}
+
+func (mp *Mempool) SortTransactionByID() {
+	// TO IMPLEMENT
 }
