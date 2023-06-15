@@ -88,6 +88,6 @@ func CreateTransaction(from, to []byte, amount int) Transaction {
 func AddTransactionToMempool(trx Transaction, mempool *Mempool) {
 	mempool.AddTransaction(trx)
 	// fmt.Println(mempool.TempStore)
-	fmt.Printf("transaction %x, added to mempool\n", trx.ID)
+	fmt.Printf("💠 transaction %x, added to mempool\n", trx.ID)
 	// fmt.Println("Am been called")
 }

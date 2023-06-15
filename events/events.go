@@ -30,7 +30,7 @@ func NewEventStream() *EventStream {
 				Stream: NewChannel(),
 			}
 		})
-		fmt.Println("Event stream created")
+		fmt.Println("✅ Event stream created")
 	} else {
 		fmt.Println("Event stream already created")
 	}
@@ -44,14 +44,16 @@ func NewChannel() *gochannel.GoChannel {
 }
 
 func (ev *EventStream) PublishMessage(payload []byte, topic string) {
-	fmt.Println("publishing service started")
-	
+		
 		msg := message.NewMessage(watermill.NewUUID(), payload)
 		err := ev.Stream.Publish(topic, msg)
 		if err != nil {
 			log.Printf("unable to publish message with topic: %v, :%v", topic, err.Error())
 		}
 		time.Sleep(time.Second)
+		fmt.Println("✅ publishing service started...")
+		
+		// fmt.Println(payload)
 	
 
 }
@@ -61,7 +63,7 @@ func (ev *EventStream) SubscribeMessage(ctx context.Context, topic string) <-cha
 	if err != nil {
 		log.Printf("no subscriber to topic : %v, %v", topic, err.Error())
 	}
-	fmt.Println("subscription service started")
+	fmt.Println("✅ subscription service started")
 	return messages
 }
 

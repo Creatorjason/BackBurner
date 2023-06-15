@@ -14,15 +14,24 @@ type (
 	}
 )
 
+var (
+	blockchain *Blockchain
+	// works for now...
+	eStream <-chan *message.Message
+)
+
 // TODO : Define error messages properly
 // Create Channels
 
 func InitializeChain(eventStream *ev.EventStream) *Blockchain {
 	// start subscription service
-	eventStream.SubscribeMessage(context.Background(), "mempool.full")
-	return &Blockchain{
+	eStream = eventStream.SubscribeMessage(context.Background(), "mempool.full")
+	blc := &Blockchain{
 		Chain:       []*Block{CreateGenesisBlock()},
 	}
+	// global variable that is used by other functions for side effects
+	blockchain = blc
+	return blc
 	
 }
 
@@ -41,12 +50,17 @@ func (bl *Blockchain) AddBlock(block *Block) {
 // Listen on channel, if the mempool has sent an array of transactions, only if mempool is full
 // chain subscribes to "mempool.full" topic
 
-func (bl *Blockchain) Process(messages <-chan *message.Message) {
-	for msg := range messages {
+func (bl *Blockchain) ProcessDataFromMemPool(messages <-chan *message.Message, stop chan struct{}) {
+	for {
+		select{
+
+		
+		case msg := <- messages:
 		fmt.Printf("received message: %s, payload: %s\n", msg.UUID, string(msg.Payload))
 		// if msg != nil {
 		prevBlock := bl.Chain[len(bl.Chain)-1]
 		transactions := DeserializeTxArray(msg.Payload)
+		fmt.Printf("%#x\n", transactions)
 		newBlock := CreateBlock(transactions, prevBlock.BlockHeader.Hash, prevBlock.BlockHeader.Height+1)
 		bl.AddBlock(newBlock)
 		bl.PrintChain()
@@ -55,11 +69,18 @@ func (bl *Blockchain) Process(messages <-chan *message.Message) {
 		// fmt.Println("Yeah")
 		// msg.Nack()
 		// }
+		// carries cancellation signal over channel
+		case <- stop:
+			return
 	}
 }
-
+}
+// A function that will be called from mempool, when a pool is emptied, to begin processing
+func StartDataProcessing(stop chan struct{}){
+	go blockchain.ProcessDataFromMemPool(eStream, stop)
+} 
 func (bl *Blockchain) PrintChain() {
-	fmt.Printf("%#v\n", bl.Chain)
+	fmt.Printf("%#v\n", len(bl.Chain))
 }
 
 // func (bl *Blockchain) ListenForMempool(empChan chan []Transaction, notifier chan bool) {

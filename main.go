@@ -29,13 +29,20 @@ func main() {
 	
 		trx1 := bl.CreateTransaction([]byte("Jason"), []byte("Qoinpal"), 100)
 		trx2 := bl.CreateTransaction([]byte("Kendrick"), []byte("Dayo"), 200)
-		trx3 := bl.CreateTransaction([]byte("Kendrick"), []byte("Dayo"), 200)
+		trx3 := bl.CreateTransaction([]byte("Kendrick"), []byte("Dayo1"), 200)
+		trx4 := bl.CreateTransaction([]byte("Kendrick"), []byte("Dayo2"), 200)
+		trx5 := bl.CreateTransaction([]byte("Kendrick"), []byte("Dayo3"), 200)
+		trx6 := bl.CreateTransaction([]byte("Kendrick"), []byte("Dayo4"), 200)
 	
 		bl.AddTransactionToMempool(trx1, mp)
 		bl.AddTransactionToMempool(trx2, mp)
 		bl.AddTransactionToMempool(trx3, mp)
+		bl.AddTransactionToMempool(trx4, mp)
+		bl.AddTransactionToMempool(trx5, mp)
+		bl.AddTransactionToMempool(trx6, mp)
+
 	
-		// Continue with the rest of your code...
+		// Continue with the rest of your code
 	
 
 	
