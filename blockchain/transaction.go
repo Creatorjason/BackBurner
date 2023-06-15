@@ -85,8 +85,9 @@ func CreateTransaction(from, to []byte, amount int) Transaction {
 	return trx
 }
 
-func AddTransactionToMempool(trx Transaction) {
-	memPool := GetMempool()
-	memPool.TempStore = append(memPool.TempStore, trx)
-	fmt.Printf("transaction %v, added to mempool", trx.ID)
+func AddTransactionToMempool(trx Transaction, mempool *Mempool) {
+	mempool.AddTransaction(trx)
+	// fmt.Println(mempool.TempStore)
+	fmt.Printf("transaction %x, added to mempool\n", trx.ID)
+	// fmt.Println("Am been called")
 }
