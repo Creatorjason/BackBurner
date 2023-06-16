@@ -51,11 +51,11 @@ func (s *Server) handleReceiveAirdrop(c *gin.Context) {
 	)
 	err := c.BindJSON(&ad)
 	handleBadRequestDueToWrongDataType(err, "AirDrop", c)
-	if s.AirDrop.AddWalletAddress(ad.WalletAddr) {
+	if s.AirDrop.AddWalletAddress(ad.WalletAddr, s.DB) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "wallet address has been whitelisted successfully",
 		})
-		fmt.Println(len(s.AirDrop.WhiteList))
+		fmt.Println(s.AirDrop.AddrCount)
 	}else{
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":"wallet address already exist or wallet address is invalid",

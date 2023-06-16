@@ -1,6 +1,7 @@
 package kvStore
 
 import (
+	"fmt"
 	"log"
 
 	badger "github.com/dgraph-io/badger/v3"
@@ -31,6 +32,7 @@ func (db *DB) Write(key, value []byte) error {
 	if err != nil {
 		log.Printf("update transaction failed: %v\n", err.Error())
 	}
+	fmt.Printf("key: %x has been stored\n", key)
 	return nil
 }
 
