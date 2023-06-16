@@ -26,10 +26,10 @@ var (
 
 func InitializeChain(eventStream *ev.EventStream) *Blockchain {
 	// start subscription service
-	sub = eventStream.SubscribeMessage(context.Background(), "mempool.full")
 	blc := &Blockchain{
 		Chain: []*Block{CreateGenesisBlock()},
 	}
+	sub = eventStream.SubscribeMessage(context.Background(), "mempool.full")
 	// global variables that are used by other functions for side effects
 	blockchain = blc
 	eStream = eventStream
@@ -53,32 +53,34 @@ func (bl *Blockchain) AddBlock(block *Block) {
 // Listen on channel, if the mempool has sent an array of transactions, only if mempool is full
 // chain subscribes to "mempool.full" topic
 
-func (bl *Blockchain) ProcessDataFromMemPool(messages <-chan *message.Message, stop chan struct{}) {
+// func (bl *Blockchain) ProcessDataFromMemPool(messages <-chan *message.Message, stop chan struct{}) {
 
-	for {
-		select {
-		case msg := <-messages:
-			msg.Ack()
-			fmt.Printf("received message: %s, payload: %s\n", msg.UUID, string(msg.Payload))
-			// if msg != nil {
-			prevBlock := bl.Chain[len(bl.Chain)-1]
-			transactions := DeserializeTxArray(msg.Payload)
-			fmt.Printf("%#x\n", transactions)
-			newBlock := CreateBlock(transactions, prevBlock.BlockHeader.Hash, prevBlock.BlockHeader.Height+1)
-			bl.AddBlock(newBlock)
-			bl.PrintChain()
-		// go eStream.Process(messages)
-		// carries cancellation signal over channel
-		case <-stop:
-			return
-		}
-	}
-}
+// 	for {
+// 		select {
+// 		case msg := <-messages:
+// 			fmt.Printf("received message: %s, payload: %s\n", msg.UUID, string(msg.Payload))
+// 			// if msg != nil {
+// 			prevBlock := bl.Chain[len(bl.Chain)-1]
+// 			transactions := DeserializeTxArray(msg.Payload)
+// 			fmt.Printf("%#x\n", transactions)
+// 			newBlock := CreateBlock(transactions, prevBlock.BlockHeader.Hash, prevBlock.BlockHeader.Height+1)
+// 			bl.AddBlock(newBlock)
+// 			bl.PrintChain()
 
-// A function that will be called from mempool, when a pool is emptied, to begin processing
-func StartDataProcessing(stop chan struct{}) {
-	go blockchain.ProcessDataFromMemPool(sub, stop)
-}
-func (bl *Blockchain) PrintChain() {
-	fmt.Printf("%v\n", len(bl.Chain))
-}
+// 			msg.Ack()
+// 		// go eStream.Process(messages)
+// 		// carries cancellation signal over channel
+// 		case <-stop:
+// 			return
+// 		}
+// 	}
+// }
+
+// // A function that will be called from mempool, when a pool is emptied, to begin processing
+// func StartDataProcessing(stop chan struct{}) {
+// 	go blockchain.ProcessDataFromMemPool(sub, stop)
+
+// }
+// func (bl *Blockchain) PrintChain() {
+// 	fmt.Printf("%v\n", len(bl.Chain))
+// }

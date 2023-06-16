@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/gob"
 	"errors"
-	"fmt"
 	"strconv"
 
 	mk "github.com/cbergoon/merkletree"
@@ -85,9 +84,9 @@ func CreateTransaction(from, to []byte, amount int) Transaction {
 	return trx
 }
 
-func AddTransactionToMempool(trx Transaction, mempool *Mempool) {
-	mempool.AddTransaction(trx)
-	// fmt.Println(mempool.TempStore)
-	fmt.Printf("💠 transaction %x, added to mempool\n", trx.Amount)
-	// fmt.Println("Am been called")
-}
+// func AddTransactionToMempool(trx Transaction, mempool *Mempool) {
+// 	mempool.AddTransaction(trx)
+// 	// fmt.Println(mempool.TempStore)
+// 	fmt.Printf("💠 transaction %v, added to mempool\n", trx.Amount)
+// 	// fmt.Println("Am been called")
+// }
