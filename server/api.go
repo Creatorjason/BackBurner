@@ -18,7 +18,7 @@ import (
 
 func (s *Server) handleGetWalletDetails(c *gin.Context){
 	//  get wallet address from user
-	
+
 	// 
 }
 
@@ -27,11 +27,7 @@ func (s *Server) handleGenerateNewWallet(c *gin.Context){
 		owner *types.WalletOwner
 	)
 	err := c.BindJSON(&owner)
-	if err != nil{
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error":"invalid data type, wants data type of Owner",
-		})
-	}
+	handleBadRequestDueToWrongDataType(err, "Owner", c)
 	if owner.Name != ""{
 		// generate new wallet
 		newWallet := wallet.NewWallet()
@@ -49,6 +45,11 @@ func (s *Server) handleGenerateNewWallet(c *gin.Context){
 }
 
 func (s *Server) handleReceiveAirdrop(c *gin.Context){
+	var ( 
+		ad *types.AirDrop
+	)
+	err := c.BindJSON(ad)
+	handleBadRequestDueToWrongDataType(err, "AirDrop", c)
 
 }
 
@@ -58,4 +59,12 @@ func (s *Server) handleSendCoins(c *gin.Context){
 
 func (s *Server) handleViewBlockchain(c *gin.Context){
 
+}
+
+func handleBadRequestDueToWrongDataType(err error,data_type string, c *gin.Context){
+	if err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":"invalid data type, wants data type of"+data_type,
+		})
+	}
 }

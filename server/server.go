@@ -3,17 +3,21 @@ package server
 import (
 	"github.com/gin-gonic/gin"
 	kv "github.com/qoinpalhq/HQ_CHAIN/kvStore"
+	coin "github.com/qoinpalhq/HQ_CHAIN/coins"
+
 )
 
 type Server struct {
 	DB     *kv.DB
 	Router *gin.Engine
+	AirDrop *coin.Airdrop
 }
 
-func NewServer(db *kv.DB, router *gin.Engine) *Server {
+func NewServer(db *kv.DB, router *gin.Engine, ad *coin.Airdrop) *Server {
 	return &Server{
 		DB: db,
 		Router: router,
+		AirDrop : ad,
 	}
 }
 

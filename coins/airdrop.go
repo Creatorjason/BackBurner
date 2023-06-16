@@ -23,6 +23,7 @@ type Airdrop struct {
 
 func NewAirDrop() *Airdrop {
 	bl := make(map[string]uint)
+	fmt.Println("Created new airdrop....")
 	return &Airdrop{
 		Balances:     bl,
 		ToShare:      TOTAL_SUPPLY - 10000,

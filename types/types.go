@@ -8,6 +8,9 @@ type (
 		WalletAddr string `json:"user_wallet_address"`
 		Balance    uint   `json:"account_balance"`
 	}
+	AirDrop struct{
+		WalletAddr string `json:"wallet_address"`
+	}
 )
 
 
