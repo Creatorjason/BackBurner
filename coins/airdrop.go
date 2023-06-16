@@ -31,15 +31,21 @@ func NewAirDrop() *Airdrop {
 	}
 }
 
-func (a *Airdrop) AddWalletAddress(wallet_addr string) {
+func (a *Airdrop) AddWalletAddress(wallet_addr string) bool{
 	isPresent := a.CheckIfWalletAddressIsWhitelisted(wallet_addr)
-	if !isPresent {
+	if len(wallet_addr) != 42{
+		log.Println("invalid wallet address, length is too long or too short")
+		return false
+	}
+	if !isPresent{
 		a.WhiteList = append(a.WhiteList, wallet_addr)
 		a.AddrCount += 1
 		log.Println(wallet_addr, "successfully whitelisted")
+		return true
 	}
 	// persist to db
 	log.Println("unable to add wallet address, already whitelisted")
+	return false
 }
 
 func (a *Airdrop) SendCoinToWalletAddresses(db *db.DB) error {
