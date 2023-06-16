@@ -11,6 +11,7 @@ type (
 	Block struct {
 		BlockHeader  *BlockHeader  `json:"block_header"`
 		Transactions []Transaction `json:"transactions"`
+		// Next         MoveTransaction
 	}
 
 	BlockHeader struct {
@@ -49,20 +50,17 @@ func CreateBlockHeader(prevHash, merkleRoot []byte, time_stamp time.Time, height
 	return bHeader
 }
 
-
 func CreateGenesisBlock() *Block {
 	// for testing purpose
-	trx1 := CreateTransaction([]byte("Jason"),[]byte("Qoinpal"),100)
+	trx1 := CreateTransaction([]byte("Jason"), []byte("Qoinpal"), 100)
 	trx2 := CreateTransaction([]byte("Kendrick"), []byte("Dayo"), 200)
 	// testing...
 	return CreateBlock([]Transaction{trx1, trx2}, nil, 0)
 }
 
-
 func GenesisBlock() *Block {
 	return nil
 }
-
 
 func (bh *BlockHeader) SerializeBH() []byte {
 	buff := new(bytes.Buffer)
@@ -72,3 +70,15 @@ func (bh *BlockHeader) SerializeBH() []byte {
 	}
 	return buff.Bytes()
 }
+
+// implement MoveTransaction interface
+
+// func (bl *Block) Execute(trx *Trxs) {
+// 	if trx.AddedToBlock{
+
+// 	}	
+// }
+
+// func (bl *Block) SetNext(next MoveTransaction) {
+
+// }

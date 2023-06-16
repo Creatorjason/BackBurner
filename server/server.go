@@ -30,5 +30,4 @@ func (s *Server) RunServer() {
 	s.Router.POST("/api/airdrop", s.handleReceiveAirdrop)
 	s.Router.GET("/api/airdrop", s.handleGetBalanceOfAddresses)
 	s.Router.Run()
-
 }

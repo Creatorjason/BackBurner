@@ -13,8 +13,7 @@ func main() {
 	router := gin.Default()
 	db := kvStore.NewDB()
 	airDrop := coin.NewAirDrop()
+	// new CoR and Trxs here 
 	sv := server.NewServer(db, router, airDrop)
 	sv.RunServer()
-
-
 }

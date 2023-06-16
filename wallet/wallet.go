@@ -9,15 +9,16 @@ import (
 	"encoding/gob"
 	"encoding/hex"
 	"log"
-	"golang.org/x/crypto/ripemd160"
+
 	"github.com/qoinpalhq/HQ_CHAIN/utils"
+	"golang.org/x/crypto/ripemd160"
 )
 
 // !!! This is a very basic wallet JBOK, only meant for experimental purposes
 // !!! DO NOT SEND REAL CRYPTOCURRENCY TO THIS WALLET ADDRESS
 
 type Wallet struct {
-	Sk   string `json:"private_key"`
+	Sk   string           `json:"private_key"`
 	Pk   string           `json:"public_key"`
 	Addr string           `json:"wallet_address"`
 }

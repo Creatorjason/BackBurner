@@ -3,6 +3,7 @@ package blockchain
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/ThreeDotsLabs/watermill/message"
 	ev "github.com/qoinpalhq/HQ_CHAIN/events"
@@ -11,6 +12,7 @@ import (
 type (
 	Blockchain struct {
 		Chain []*Block `json:"block_chain"`
+		Next MoveTransaction
 	}
 )
 
@@ -46,6 +48,20 @@ func (bl *Blockchain) AddBlock(block *Block) {
 	bl.Chain = append(bl.Chain, block)
 
 	fmt.Println("New Block added successfully to chain")
+}
+
+// Implement MoveTransaction interface
+func (bl *Blockchain) Execute(trxs *Trxs) {
+	log.Println("Adding transactions to new block")
+	prevBlock := bl.Chain[len(bl.Chain) - 1]
+	block := CreateBlock(trxs.Transactions, prevBlock.BlockHeader.Hash, prevBlock.BlockHeader.Height + 1)
+	bl.AddBlock(block)
+	// log.Println("Added new Block to chain...")
+
+}
+
+func (bl *Blockchain) SetNext(next MoveTransaction) {
+	bl.Next = next
 }
 
 // using a singleton design pattern, get a single instance of mempool, that can be shared across components

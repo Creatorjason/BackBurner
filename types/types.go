@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/gob"
 	"log"
+
+	bl "github.com/qoinpalhq/HQ_CHAIN/blockchain"
 )
 
 type (
@@ -17,12 +19,29 @@ type (
 	AirDrop struct {
 		WalletAddr string `json:"wallet_address"`
 	}
+	// chain of responsibility
+	// CoR struct holds all the components that will be involved in the
+	// processing of an array of transaction
+	CoR struct {
+		Mempool    *bl.Mempool
+		Block      *bl.Block
+		Blockchain *bl.Blockchain
+	}
 )
 
 func NewUserAccount(wallet_addr string, balance uint) *UserAccount {
 	return &UserAccount{
 		WalletAddr: wallet_addr,
 		Balance:    balance,
+	}
+}
+
+
+func NewCoR(mp *bl.Mempool, bk *bl.Block, bc *bl.Blockchain) *CoR{
+	return &CoR{
+		Mempool : mp,
+		Block : bk,
+		Blockchain : bc,
 	}
 }
 

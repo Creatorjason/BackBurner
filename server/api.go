@@ -52,6 +52,7 @@ func (s *Server) handleReceiveAirdrop(c *gin.Context) {
 		ad types.AirDrop
 	)
 	err := c.BindJSON(&ad)
+	fmt.Println(len(ad.WalletAddr))
 	handleBadRequestDueToWrongDataType(err, "AirDrop", c)
 	if s.AirDrop.AddWalletAddress(ad.WalletAddr, s.DB) {
 		c.JSON(http.StatusOK, gin.H{
