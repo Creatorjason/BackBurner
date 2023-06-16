@@ -28,6 +28,7 @@ func (s *Server) RunServer() {
 	s.Router.GET("/api/send", s.handleSendCoins)
 	s.Router.GET("/api/chain", s.handleViewBlockchain)
 	s.Router.POST("/api/airdrop", s.handleReceiveAirdrop)
+	s.Router.GET("/api/airdrop", s.handleGetBalanceOfAddresses)
 	s.Router.Run()
 
 }

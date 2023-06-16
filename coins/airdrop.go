@@ -6,7 +6,6 @@ import (
 
 	db "github.com/qoinpalhq/HQ_CHAIN/kvStore"
 	"github.com/qoinpalhq/HQ_CHAIN/types"
-	"github.com/qoinpalhq/HQ_CHAIN/utils"
 )
 
 // Airdrop basically shares the an amount of coins amongst whitelisted wallet addresses
@@ -27,7 +26,7 @@ func NewAirDrop() *Airdrop {
 	return &Airdrop{
 		Balances:     bl,
 		ToShare:      TOTAL_SUPPLY - 10000,
-		MaxAddrCount: 10,
+		MaxAddrCount: 2,
 	}
 }
 
@@ -68,7 +67,7 @@ func (a *Airdrop) SendCoinToWalletAddresses(db *db.DB) error {
 			//  create new acount
 			newAccount := types.NewUserAccount(addr, a.Balances[addr])
 			// pesist to db
-			err := db.Write([]byte(addr), utils.Serialize(newAccount))
+			err := db.Write([]byte(addr), newAccount.Serialize())
 			if err != nil {
 				return fmt.Errorf("failed to write account to database: %w", err)
 			}

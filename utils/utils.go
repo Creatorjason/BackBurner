@@ -46,3 +46,12 @@ func Serialize(data interface{}) []byte {
 	}
 	return buff.Bytes()
 }
+
+func Deserialize(data []byte) any{
+	var payload interface{}
+	err := gob.NewDecoder(bytes.NewReader(data)).Decode(&payload)
+	if err != nil{
+		log.Printf("failed to deserialize payload: %v\n", err.Error())
+	}
+	return payload
+}

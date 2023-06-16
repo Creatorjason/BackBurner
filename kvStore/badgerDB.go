@@ -37,5 +37,20 @@ func (db *DB) Write(key, value []byte) error {
 }
 
 func (db *DB) Read(key []byte) ([]byte, error) {
-	return nil, nil
+	var value []byte
+	err := db.Db.View(func(txn *badger.Txn)error{
+		item, err := txn.Get(key)
+		if err != nil{
+			log.Printf("unable to get key: %v\n", err.Error())
+		}
+		err = item.Value(func(val []byte) error{
+			value = append([]byte{}, val...)
+			return nil
+		})
+		return err
+	})
+	if err != nil{
+		return nil, err
+	}
+	return value, nil
 }
