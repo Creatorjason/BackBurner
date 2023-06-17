@@ -35,10 +35,12 @@ func (s *Server) RunServer() {
 	s.Router.GET("/api/airdrop", s.handleGetBalanceOfWhitelistedAddresses)
 	// Adding CORS
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"https://master--hq-chain-ui.netlify.app/"}
+	// corsConfig.AllowOrigins = []string{"https://master--hq-chain-ui.netlify.app/"}
+	corsConfig.AllowAllOrigins = true
 	// Options method for react js
 	corsConfig.AddAllowMethods("OPTIONS")
 	corsConfig.AllowCredentials = true
+
 
 	s.Router.Use(cors.New(corsConfig))
 
