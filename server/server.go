@@ -26,14 +26,7 @@ func NewServer(db *kv.DB, router *gin.Engine, ad *coin.Airdrop, cor *bc.CoR) *Se
 
 func (s *Server) RunServer() {
 	// register endpoints here
-	s.Router.GET("/api/wallet", s.handleGetWalletDetails)
-	s.Router.POST("/api/wallet", s.handleGenerateNewWallet)
-	s.Router.POST("/api/send", s.handleSendCoins)
-	s.Router.GET("/", s.handleViewBlockchain)
-	s.Router.POST("/api/airdrop", s.handleReceiveAirdrop)
-	// Work on this later, wrong enpoint handler
-	s.Router.GET("/api/airdrop", s.handleGetBalanceOfWhitelistedAddresses)
-	// Adding CORS
+
 	corsConfig := cors.DefaultConfig()
 	// corsConfig.AllowOrigins = []string{"https://master--hq-chain-ui.netlify.app/"}
 	corsConfig.AllowAllOrigins = true
@@ -43,6 +36,15 @@ func (s *Server) RunServer() {
 
 
 	s.Router.Use(cors.New(corsConfig))
+	s.Router.GET("/api/wallet", s.handleGetWalletDetails)
+	s.Router.POST("/api/wallet", s.handleGenerateNewWallet)
+	s.Router.POST("/api/send", s.handleSendCoins)
+	s.Router.GET("/", s.handleViewBlockchain)
+	s.Router.POST("/api/airdrop", s.handleReceiveAirdrop)
+	// Work on this later, wrong enpoint handler
+	s.Router.GET("/api/airdrop", s.handleGetBalanceOfWhitelistedAddresses)
+	// Adding CORS
+	
 
 	s.Router.Run()
 }
