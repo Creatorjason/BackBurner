@@ -1,11 +1,11 @@
 package server
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	kv "github.com/qoinpalhq/HQ_CHAIN/kvStore"
-	coin "github.com/qoinpalhq/HQ_CHAIN/coins"
 	bc "github.com/qoinpalhq/HQ_CHAIN/blockchain"
-
+	coin "github.com/qoinpalhq/HQ_CHAIN/coins"
+	kv "github.com/qoinpalhq/HQ_CHAIN/kvStore"
 )
 
 type Server struct {
@@ -33,5 +33,12 @@ func (s *Server) RunServer() {
 	s.Router.POST("/api/airdrop", s.handleReceiveAirdrop)
 	// Work on this later, wrong enpoint handler
 	s.Router.GET("/api/airdrop", s.handleGetBalanceOfWhitelistedAddresses)
+	// Adding CORS
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowOrigins = []string{"https://master--hq-chain-ui.netlify.app/", "localhost:3000"}
+	// Options method for react js
+	corsConfig.AddAllowMethods("OPTIONS")
+	s.Router.Use(cors.New(corsConfig))
+
 	s.Router.Run()
 }
