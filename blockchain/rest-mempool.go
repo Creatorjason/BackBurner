@@ -55,6 +55,8 @@ func (mp *Mempool) Execute(trx *Trxs) {
 		trxs := mp.EmptyMempool()
 		trx.Transactions = append(trx.Transactions, trxs...)
 		mp.Next.Execute(trx)
+		// empty transactions here
+		trx.Transactions = nil
 		log.Println("Mempool is full, moved transactions to block....")
 		return
 	}
