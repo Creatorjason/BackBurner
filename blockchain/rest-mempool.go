@@ -7,7 +7,7 @@ import (
 // All transactions are sent to the mempool
 // When it full it is emptied into a block that will added to chain
 
-const MAX_POOL_CAP = 2
+const MAX_POOL_CAP = 1
 
 type Mempool struct {
 	TempStore []Transaction
@@ -32,7 +32,7 @@ func (mp *Mempool) AddTransactionToMempool(trx Transaction) {
 }
 
 func (mp *Mempool) isMempoolFull() bool {
-	return len(mp.TempStore) >= MAX_POOL_CAP
+	return len(mp.TempStore) > MAX_POOL_CAP
 }
 
 //  empty contents of mempool into block
@@ -50,8 +50,8 @@ func (mp *Mempool) EmptyMempool() []Transaction {
 // implement MoveTransaction interface
 
 func (mp *Mempool) Execute(trx *Trxs) {
-	trx.MempoolFull = mp.isMempoolFull()
-	if trx.MempoolFull {
+	// trx.MempoolFull = mp.isMempoolFull()
+	if mp.isMempoolFull() {
 		trxs := mp.EmptyMempool()
 		trx.Transactions = append(trx.Transactions, trxs...)
 		mp.Next.Execute(trx)

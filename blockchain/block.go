@@ -52,8 +52,8 @@ func CreateBlockHeader(prevHash, merkleRoot []byte, time_stamp time.Time, height
 
 func CreateGenesisBlock() *Block {
 	// for testing purpose
-	trx1 := CreateTransaction([]byte("Jason"), []byte("Qoinpal"), 100)
-	trx2 := CreateTransaction([]byte("Kendrick"), []byte("Dayo"), 200)
+	trx1 := CreateTransaction("Jason","Qoinpal", 100)
+	trx2 := CreateTransaction("Kendrick","Dayo", 200)
 	// testing...
 	return CreateBlock([]Transaction{trx1, trx2}, nil, 0)
 }

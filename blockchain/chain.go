@@ -1,41 +1,37 @@
 package blockchain
 
 import (
-	"context"
 	"fmt"
 	"log"
-
-	"github.com/ThreeDotsLabs/watermill/message"
-	ev "github.com/qoinpalhq/HQ_CHAIN/events"
 )
 
 type (
 	Blockchain struct {
 		Chain []*Block `json:"block_chain"`
-		Next MoveTransaction
+		Next  MoveTransaction
 	}
 )
 
-var (
-	blockchain *Blockchain
-	// works for now...
-	sub     <-chan *message.Message
-	eStream *ev.EventStream
-)
+// var (
+// 	blockchain *Blockchain
+// 	// works for now...
+// 	sub     <-chan *message.Message
+// 	eStream *ev.EventStream
+// )
 
 // TODO : Define error messages properly
 // Create Channels
 
-func InitializeChain(eventStream *ev.EventStream) *Blockchain {
+func InitializeChain() *Blockchain {
 	// start subscription service
 	blc := &Blockchain{
 		Chain: []*Block{CreateGenesisBlock()},
 	}
-	sub = eventStream.SubscribeMessage(context.Background(), "mempool.full")
-	// global variables that are used by other functions for side effects
-	blockchain = blc
-	eStream = eventStream
-	go eStream.Process(sub)
+	// sub = eventStream.SubscribeMessage(context.Background(), "mempool.full")
+	// // global variables that are used by other functions for side effects
+	// blockchain = blc
+	// eStream = eventStream
+	// go eStream.Process(sub)
 	return blc
 
 }
@@ -53,8 +49,8 @@ func (bl *Blockchain) AddBlock(block *Block) {
 // Implement MoveTransaction interface
 func (bl *Blockchain) Execute(trxs *Trxs) {
 	log.Println("Adding transactions to new block")
-	prevBlock := bl.Chain[len(bl.Chain) - 1]
-	block := CreateBlock(trxs.Transactions, prevBlock.BlockHeader.Hash, prevBlock.BlockHeader.Height + 1)
+	prevBlock := bl.Chain[len(bl.Chain)-1]
+	block := CreateBlock(trxs.Transactions, prevBlock.BlockHeader.Hash, prevBlock.BlockHeader.Height+1)
 	bl.AddBlock(block)
 	// log.Println("Added new Block to chain...")
 

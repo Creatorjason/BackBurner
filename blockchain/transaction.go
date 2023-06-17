@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/gob"
+	"encoding/hex"
 	"errors"
 	"strconv"
 
@@ -12,9 +13,9 @@ import (
 
 type (
 	Transaction struct {
-		ID           []byte
-		SenderAddr   []byte
-		ReceiverAddr []byte
+		ID           string
+		SenderAddr   string
+		ReceiverAddr string
 		Amount       int
 	}
 	// Simplifying this for now, since am not dealing with UTXOs
@@ -70,7 +71,7 @@ func GetMerkleRoot(trxs []Transaction) []byte {
 	return mTree.MerkleRoot()
 }
 
-func CreateTransaction(from, to []byte, amount int) Transaction {
+func CreateTransaction(from, to string, amount int) Transaction {
 	// Hash of transaction data
 	trx := Transaction{
 		SenderAddr:   from,
@@ -78,9 +79,9 @@ func CreateTransaction(from, to []byte, amount int) Transaction {
 		Amount:       amount,
 	}
 	amountStr := strconv.Itoa(amount)
-	b := bytes.Join([][]byte{from, to, []byte(amountStr)}, []byte{})
+	b := bytes.Join([][]byte{[]byte(from), []byte(to), []byte(amountStr)}, []byte{})
 	hash := sha256.Sum256(b)
-	trx.ID = hash[:]
+	trx.ID = hex.EncodeToString(hash[:])
 	return trx
 }
 

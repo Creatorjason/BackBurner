@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"encoding/gob"
 	"log"
-
-	bl "github.com/qoinpalhq/HQ_CHAIN/blockchain"
 )
 
 type (
@@ -22,10 +20,11 @@ type (
 	// chain of responsibility
 	// CoR struct holds all the components that will be involved in the
 	// processing of an array of transaction
-	CoR struct {
-		Mempool    *bl.Mempool
-		Block      *bl.Block
-		Blockchain *bl.Blockchain
+	
+	Transaction struct {
+		Sender   string `json:"sender"`
+		Receiver string `json:"receiver"`
+		Amount   int    `json:"amount"`
 	}
 )
 
@@ -37,13 +36,6 @@ func NewUserAccount(wallet_addr string, balance uint) *UserAccount {
 }
 
 
-func NewCoR(mp *bl.Mempool, bk *bl.Block, bc *bl.Blockchain) *CoR{
-	return &CoR{
-		Mempool : mp,
-		Block : bk,
-		Blockchain : bc,
-	}
-}
 
 // move later
 func (ua *UserAccount) Serialize() []byte {

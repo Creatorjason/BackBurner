@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/qoinpalhq/HQ_CHAIN/types"
 	"github.com/qoinpalhq/HQ_CHAIN/wallet"
-	// "github.com/qoinpalhq/HQ_CHAIN/wallet"
+	bc "github.com/qoinpalhq/HQ_CHAIN/blockchain"
 	// "github.com/qoinpalhq/HQ_CHAIN/kvStore"
 )
 
@@ -90,7 +90,29 @@ func (s *Server) handleGetBalanceOfAddresses(c *gin.Context){
 
 
 
+
+// TODO : Bug-: Transactions double in new block
 func (s *Server) handleSendCoins(c *gin.Context) {
+	var (
+		transaction types.Transaction
+	)
+	err := c.BindJSON(&transaction)
+	handleBadRequestDueToWrongDataType(err, "Transaction", c)
+
+	// test transaction creation
+	trx := bc.CreateTransaction(transaction.Sender, transaction.Receiver, transaction.Amount)
+	// stored created transaction in mempool
+	s.Cor.Mempool.AddTransactionToMempool(trx)
+	s.Cor.Mempool.Execute(s.Cor.Trxs)
+	s.Cor.Mempool.SetNext(s.Cor.Blockchain)
+
+
+	
+	c.JSON(http.StatusOK, s.Cor.Blockchain)
+	// "4e6b3bd43d3e70ff7a258982bb090a2dc50a7d09"
+	// "22211180384ae191718d5d725c2ecda3b130e32e"
+	
+
 
 }
 
@@ -98,11 +120,13 @@ func (s *Server) handleViewBlockchain(c *gin.Context) {
 
 }
 
+func updateBalance(){}
+
+
 func handleBadRequestDueToWrongDataType(err error, data_type string, c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid data type, wants data type of" + data_type,
 		})
-		return
 	}
 }
