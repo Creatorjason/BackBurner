@@ -29,7 +29,7 @@ func (s *Server) RunServer() {
 	s.Router.GET("/api/wallet", s.handleGetWalletDetails)
 	s.Router.POST("/api/wallet", s.handleGenerateNewWallet)
 	s.Router.POST("/api/send", s.handleSendCoins)
-	s.Router.GET("/api/chain", s.handleViewBlockchain)
+	s.Router.GET("/", s.handleViewBlockchain)
 	s.Router.POST("/api/airdrop", s.handleReceiveAirdrop)
 	// Work on this later, wrong enpoint handler
 	s.Router.GET("/api/airdrop", s.handleGetBalanceOfWhitelistedAddresses)
