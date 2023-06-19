@@ -71,7 +71,7 @@ func (s *Server) handleGenerateNewWallet(c *gin.Context) {
 		}
 		// respond to client with new wallet data
 		c.JSON(http.StatusOK, gin.H{
-			"payload":newWallet,
+			"message":newWallet,
 		})
 	}else{
 		c.JSON(http.StatusInternalServerError, gin.H{"message":"unable to create new wallet"})
