@@ -26,7 +26,7 @@ func NewAirDrop() *Airdrop {
 	return &Airdrop{
 		Balances:     bl,
 		ToShare:      TOTAL_SUPPLY - 10000,
-		MaxAddrCount: 2,
+		MaxAddrCount: 1,
 	}
 }
 
@@ -52,7 +52,7 @@ func (a *Airdrop) AddWalletAddress(wallet_addr string, db *db.DB) bool{
 func (a *Airdrop) SendCoinToWalletAddresses(db *db.DB) error {
 	//  if the address count is at max yet
 	if len(a.WhiteList) == a.MaxAddrCount && !a.IsExhausted{
-		coinsPerAddress := a.ToShare / uint(len(a.WhiteList))
+		coinsPerAddress := a.ToShare / uint(len(a.WhiteList)) 
 		for _, addr := range a.WhiteList {
 			a.Balances[addr] = coinsPerAddress
 		}
