@@ -27,16 +27,21 @@ func (s *Server) handleGetWalletDetails(c *gin.Context) {
 		ad types.Wallet
 	)
 	err := c.BindJSON(&ad)
-	fmt.Println(len(ad.WalletAddr))
+	// fmt.Println(len(ad.WalletAddr))
+	if len(ad.WalletAddr) != 40{
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message":"invalid wallet address, address length too short or too long",
+		})
+	}
 	handleBadRequestDueToWrongDataType(err, "Wallet", c)
 	userAcctByte, err := s.DB.Read([]byte(ad.WalletAddr))
 	fmt.Println("Reading...")
 	if err != nil {
 		log.Printf("unable to read data from db %v\n", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to retrieve user account data"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to retrieve user account data"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"users": types.Deserialize(userAcctByte)})
+	c.JSON(http.StatusOK, gin.H{"message": types.Deserialize(userAcctByte)})
 
 	//
 }
@@ -50,7 +55,7 @@ func (s *Server) handleGenerateNewWallet(c *gin.Context) {
 	// fmt.Println(err)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "invalid data type, wants data type of WalletOwner",
+			"message": "invalid data type, wants data type of WalletOwner",
 		})
 		return
 	}
@@ -61,7 +66,7 @@ func (s *Server) handleGenerateNewWallet(c *gin.Context) {
 		writeErr := s.DB.Write([]byte(owner.Name), newWallet.SerializeWallet())
 		if writeErr != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": "failed to write wallet data to db",
+				"message": "failed to write wallet data to db",
 			})
 		}
 		// respond to client with new wallet data
@@ -69,7 +74,7 @@ func (s *Server) handleGenerateNewWallet(c *gin.Context) {
 			"payload":newWallet,
 		})
 	}else{
-		c.JSON(http.StatusInternalServerError, gin.H{"error":"unable to create new wallet"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message":"unable to create new wallet"})
 	}
 
 }
@@ -89,7 +94,7 @@ func (s *Server) handleReceiveAirdrop(c *gin.Context) {
 		return
 	} else {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "wallet address already exist or wallet address is invalid",
+			"message": "wallet address already exist or wallet address is invalid",
 		})
 		return
 	}
@@ -104,7 +109,7 @@ func (s *Server) handleGetBalanceOfWhitelistedAddresses(c *gin.Context) {
 		fmt.Println("Reading...")
 		if err != nil {
 			log.Printf("unable to read data from db %v\n", err.Error())
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to retrieve user account data"})
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to retrieve user account data"})
 			return
 		}
 		userAcct := types.Deserialize(userAcctByte)
@@ -113,11 +118,11 @@ func (s *Server) handleGetBalanceOfWhitelistedAddresses(c *gin.Context) {
 	fmt.Println(s.AirDrop.WhiteList)
 	if usersAcct == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "users account list is empty, no address has been whitelisted yet",
+			"message": "message account list is empty, no address has been whitelisted yet",
 		})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"users": usersAcct})
+	c.JSON(http.StatusOK, gin.H{"message": usersAcct})
 
 }
 
@@ -135,7 +140,7 @@ func (s *Server) handleSendCoins(c *gin.Context) {
 	senderAcct, err := s.DB.Read([]byte(transaction.Sender))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "unable to get user account from db",
+			"message": "unable to get user account from db",
 		})
 		return
 	}
@@ -144,7 +149,7 @@ func (s *Server) handleSendCoins(c *gin.Context) {
 	senderBal := senderAcctStruct.Balance
 	if uint(transaction.Amount) > senderBal {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Insufficient balance, you can't send more that what you have",
+			"message": "Insufficient balance, you can't send more that what you have",
 		})
 		return
 	}
@@ -156,7 +161,7 @@ func (s *Server) handleSendCoins(c *gin.Context) {
 	err = s.DB.Write([]byte(transaction.Sender), senderAcctStruct.Serialize())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("failed to update sender account: %v", err),
+			"message": fmt.Sprintf("failed to update sender account: %v", err),
 		})
 		return
 	}
@@ -165,7 +170,7 @@ func (s *Server) handleSendCoins(c *gin.Context) {
 	recvAcct, err := s.DB.Read([]byte(transaction.Receiver))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "unable to get user account from db",
+			"message": "unable to get user account from db",
 		})
 		return
 	}
@@ -176,7 +181,7 @@ func (s *Server) handleSendCoins(c *gin.Context) {
 	err = s.DB.Write([]byte(transaction.Receiver), recvAcctStruct.Serialize())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("failed to update receiver account: %v", err),
+			"message": fmt.Sprintf("failed to update receiver account: %v", err),
 		})
 		return
 	}
@@ -200,14 +205,14 @@ func (s *Server) handleViewBlockchain(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusInternalServerError, gin.H{
-		"error":"No Blockchain to display",
+		"message":"No Blockchain to display",
 	})
 }
 
 func handleBadRequestDueToWrongDataType(err error, data_type string, c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "invalid data type, wants data type of" + data_type,
+			"message": "invalid data type, wants data type of" + data_type,
 		})
 	}
 }
