@@ -23,21 +23,20 @@ import (
 
 func (s *Server) handleGetWalletDetails(c *gin.Context) {
 	//  get wallet address from user
-	var (
-		ad types.Wallet
-	)
-	err := c.BindJSON(&ad)
+	// var (
+		// ad types.Wallet
+	// )
+	addr := c.Param("addr")
 	// fmt.Println(len(ad.WalletAddr))
-	if len(ad.WalletAddr) != 40{
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message":"invalid wallet address, address length too short or too long",
-		})
-	}
-	handleBadRequestDueToWrongDataType(err, "Wallet", c)
-	userAcctByte, err := s.DB.Read([]byte(ad.WalletAddr))
+	// if len(ad.WalletAddr) != 40{
+		// c.JSON(http.StatusBadRequest, gin.H{
+			// "message":"invalid wallet address, address length too short or too long",
+		// })
+	// }
+	userAcctByte, err := s.DB.Read([]byte(addr))
 	fmt.Println("Reading...")
 	if err != nil {
-		log.Printf("unable to read data from db %v\n", err.Error())
+		log.Printf("unable to read data from db %v\n", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to retrieve user account data"})
 		return
 	}

@@ -36,7 +36,7 @@ func (s *Server) RunServer() {
 
 
 	s.Router.Use(cors.New(corsConfig))
-	s.Router.GET("/api/wallet", s.handleGetWalletDetails)
+	s.Router.GET("/api/wallet/:addr", s.handleGetWalletDetails)
 	s.Router.POST("/api/wallet", s.handleGenerateNewWallet)
 	s.Router.POST("/api/send", s.handleSendCoins)
 	s.Router.GET("/", s.handleViewBlockchain)
