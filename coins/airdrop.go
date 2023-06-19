@@ -2,7 +2,7 @@ package coins
 
 import (
 	"fmt"
-	"log"
+	// "log"
 
 	db "github.com/qoinpalhq/HQ_CHAIN/kvStore"
 	"github.com/qoinpalhq/HQ_CHAIN/types"
@@ -26,55 +26,64 @@ func NewAirDrop() *Airdrop {
 	return &Airdrop{
 		Balances:     bl,
 		ToShare:      TOTAL_SUPPLY - 10000,
-		MaxAddrCount: 1,
+		MaxAddrCount: 0,
 	}
 }
 
-func (a *Airdrop) AddWalletAddress(wallet_addr string, db *db.DB) bool{
-	isPresent := a.CheckIfWalletAddressIsWhitelisted(wallet_addr)
-	if len(wallet_addr) != 40{
-		log.Println("invalid wallet address, length is too long or too short")
-		return false
+func (a *Airdrop) AddWalletAddress(wallet_addr string, db *db.DB) bool {
+	// isPresent := a.CheckIfWalletAddressIsWhitelisted(wallet_addr)
+	// if len(wallet_addr) != 40 {
+		// log.Println("invalid wallet address, length is too long or too short")
+		// return false
+	// }
+	// if !isPresent {
+		// a.WhiteList = append(a.WhiteList, wallet_addr)
+		// a.AddrCount += 1
+		// log.Println(wallet_addr, "successfully whitelisted")
+		// if a.AddrCount > a.MaxAddrCount{
+		// }
+		// return true
+	// }
+	// log.Println("unable to add wallet address, already whitelisted")
+	if len(wallet_addr) == 40{
+	a.SendCoinToWalletAddresses(wallet_addr,db)
 	}
-	if !isPresent{
-		a.WhiteList = append(a.WhiteList, wallet_addr)
-		a.AddrCount += 1
-		log.Println(wallet_addr, "successfully whitelisted")
-		if a.AddrCount == a.MaxAddrCount{
-			a.SendCoinToWalletAddresses(db)
-		}
-		return true
-	}
-	log.Println("unable to add wallet address, already whitelisted")
-	return false
+	return true
 }
 
-func (a *Airdrop) SendCoinToWalletAddresses(db *db.DB) error {
+func (a *Airdrop) SendCoinToWalletAddresses(wallet_addr string, db *db.DB) error {
 	//  if the address count is at max yet
-	if len(a.WhiteList) == a.MaxAddrCount && !a.IsExhausted{
-		coinsPerAddress := a.ToShare / uint(len(a.WhiteList)) 
-		for _, addr := range a.WhiteList {
-			a.Balances[addr] = coinsPerAddress
-		}
+	// if len(a.WhiteList) > a.MaxAddrCount && !a.IsExhausted {
 
+		// for _, addr := range a.WhiteList {
+		//  create new acount
+		// newAccount := types.NewUserAccount(addr, a.Balances[addr])
+		// pesist to db
+		// err := db.Write([]byte(addr), newAccount.Serialize())
+		// if err != nil {
+		// return fmt.Errorf("failed to write account to database: %w", err)
+		// }
+		// }
+		coinsPerAddress := 9900
+
+		// for _, addr := range a.WhiteList {
+		a.Balances[wallet_addr] = uint(coinsPerAddress)
+		// }
 		// Decrement a.ToShare by the total coins distributed
-		totalCoinsDistributed := coinsPerAddress * uint(len(a.WhiteList))
+		totalCoinsDistributed := uint(coinsPerAddress) 
 		a.ToShare -= totalCoinsDistributed
-		if a.ToShare == 0{
-			a.IsExhausted = true
-		}
-		for _, addr := range a.WhiteList {
-			//  create new acount
-			newAccount := types.NewUserAccount(addr, a.Balances[addr])
-			// pesist to db
-			err := db.Write([]byte(addr), newAccount.Serialize())
-			if err != nil {
-				return fmt.Errorf("failed to write account to database: %w", err)
-			}
+		// if a.ToShare == 0 {ß
+			// a.IsExhausted = true
+		// }
+		newAccount := types.NewUserAccount(wallet_addr, a.Balances[wallet_addr])
+		// pesist to db
+		err := db.Write([]byte(wallet_addr), newAccount.Serialize())
+		if err != nil {
+			return fmt.Errorf("failed to write account to database: %w", err)
 		}
 		return nil
-	}
-	return fmt.Errorf("cannot send coins now, whitelist not yet filled")
+	// }
+	// return fmt.Errorf("cannot send coins now, whitelist not yet filled")
 }
 
 func (a *Airdrop) CheckIfWalletAddressIsWhitelisted(wallet_addr string) bool {

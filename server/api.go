@@ -89,7 +89,7 @@ func (s *Server) handleReceiveAirdrop(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "wallet address has been whitelisted successfully",
 		})
-		fmt.Println(s.AirDrop.AddrCount)
+		fmt.Println("Address count",s.AirDrop.AddrCount)
 		return
 	} else {
 		c.JSON(http.StatusInternalServerError, gin.H{

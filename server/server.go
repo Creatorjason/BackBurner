@@ -41,7 +41,7 @@ func (s *Server) RunServer() {
 	s.Router.POST("/api/send", s.handleSendCoins)
 	s.Router.GET("/", s.handleViewBlockchain)
 	s.Router.POST("/api/airdrop", s.handleReceiveAirdrop)
-	// Work on this later, wrong enpoint handler
+	// Work on this later, wrong endpoint handler
 	s.Router.GET("/api/airdrop", s.handleGetBalanceOfWhitelistedAddresses)
 	// Adding CORS
 	
