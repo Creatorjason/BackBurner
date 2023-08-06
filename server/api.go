@@ -81,20 +81,22 @@ func (s *Server) handleGenerateNewWallet(c *gin.Context) {
 func (s *Server) handleReceiveAirdrop(c *gin.Context) {
 	var (
 		ad types.Wallet
+		airdropped bool
 	)
 	err := c.BindJSON(&ad)
 	fmt.Println(len(ad.WalletAddr))
 	handleBadRequestDueToWrongDataType(err, "Wallet", c)
 	if s.AirDrop.AddWalletAddress(ad.WalletAddr, s.DB) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "wallet address has been whitelisted successfully",
-		})
+		airdropped = true
+		c.JSON(http.StatusOK, airdropped)
+			// "message": airdropped,
+		// })
 		fmt.Println("Address count",s.AirDrop.AddrCount)
 		return
 	} else {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "wallet address already exist or wallet address is invalid",
-		})
+		airdropped = false
+		c.JSON(http.StatusInternalServerError, airdropped)
+		// })
 		return
 	}
 }

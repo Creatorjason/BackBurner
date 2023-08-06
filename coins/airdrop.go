@@ -1,5 +1,5 @@
 package coins
-
+// THIS CODE IS BROKEN
 import (
 	"fmt"
 	// "log"
@@ -9,7 +9,7 @@ import (
 )
 
 // Airdrop basically shares the an amount of coins amongst whitelisted wallet addresses
-
+const COINS_PER_ADDRESS = 500
 type Airdrop struct {
 	WhiteList    []string
 	MaxAddrCount int
@@ -47,8 +47,9 @@ func (a *Airdrop) AddWalletAddress(wallet_addr string, db *db.DB) bool {
 	// log.Println("unable to add wallet address, already whitelisted")
 	if len(wallet_addr) == 40{
 	a.SendCoinToWalletAddresses(wallet_addr,db)
-	}
 	return true
+	}
+	return false
 }
 
 func (a *Airdrop) SendCoinToWalletAddresses(wallet_addr string, db *db.DB) error {
@@ -64,7 +65,7 @@ func (a *Airdrop) SendCoinToWalletAddresses(wallet_addr string, db *db.DB) error
 		// return fmt.Errorf("failed to write account to database: %w", err)
 		// }
 		// }
-		coinsPerAddress := 9900
+		coinsPerAddress := COINS_PER_ADDRESS
 
 		// for _, addr := range a.WhiteList {
 		a.Balances[wallet_addr] = uint(coinsPerAddress)
