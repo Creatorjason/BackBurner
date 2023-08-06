@@ -188,9 +188,12 @@ func (s *Server) handleSendCoins(c *gin.Context) {
 	}
 
 	// stored created transaction in mempool
-	s.Cor.Mempool.AddTransactionToMempool(trx)
-	s.Cor.Mempool.Execute(s.Cor.Trxs)
-	s.Cor.Mempool.SetNext(s.Cor.Blockchain)
+	// s.Cor.Mempool.AddTransactionToMempool(trx)
+	// s.Cor.Mempool.Execute(s.Cor.Trxs)
+	// s.Cor.Mempool.SetNext(s.Cor.Blockchain)
+	trxs := &bc.Trxs{}
+	trxs.Transactions = append(trxs.Transactions, trx)
+	s.Cor.Blockchain.Execute(trxs)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message":fmt.Sprintf("successfully sent %v from %v to %v", transaction.Amount, transaction.Sender, transaction.Receiver),
