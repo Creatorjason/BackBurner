@@ -14,7 +14,8 @@ type DB struct {
 }
 
 func NewDB() *DB {
-	opts := badger.DefaultOptions("").WithInMemory(true)
+	// opts := badger.DefaultOptions("").WithInMemory(true)
+	opts := badger.DefaultOptions(DB_PATH)
 	db, err := badger.Open(opts)
 	if err != nil {
 		log.Fatalf("unable to open badger db: %v\n", err.Error())
