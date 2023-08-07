@@ -195,9 +195,11 @@ func (s *Server) handleSendCoins(c *gin.Context) {
 	trxs.Transactions = append(trxs.Transactions, trx)
 	s.Cor.Blockchain.Execute(trxs)
 
-	c.JSON(http.StatusOK, gin.H{
-		"message":fmt.Sprintf("successfully sent %v from %v to %v", transaction.Amount, transaction.Sender, transaction.Receiver),
-	})
+	// c.JSON(http.StatusOK, gin.H{
+		// "message":fmt.Sprintf("successfully sent %v from %v to %v", transaction.Amount, transaction.Sender, transaction.Receiver),
+	// })
+	// TODO : fix this later
+	c.JSON(http.StatusOK, true)
 	// "4e6b3bd43d3e70ff7a258982bb090a2dc50a7d09"
 	// "22211180384ae191718d5d725c2ecda3b130e32e"
 
