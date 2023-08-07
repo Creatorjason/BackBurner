@@ -68,6 +68,8 @@ func (s *Server) handleGenerateNewWallet(c *gin.Context) {
 				"message": "failed to write wallet data to db",
 			})
 		}
+		// then set balance to zero
+		s.AirDrop.SendCoinToWalletAddresses(newWallet.Addr, s.DB, true)
 		// respond to client with new wallet data
 		c.JSON(http.StatusOK, gin.H{
 			"message":newWallet,

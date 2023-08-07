@@ -46,13 +46,13 @@ func (a *Airdrop) AddWalletAddress(wallet_addr string, db *db.DB) bool {
 	// }
 	// log.Println("unable to add wallet address, already whitelisted")
 	if len(wallet_addr) == 40{
-	a.SendCoinToWalletAddresses(wallet_addr,db)
+	a.SendCoinToWalletAddresses(wallet_addr,db,false)
 	return true
 	}
 	return false
 }
 
-func (a *Airdrop) SendCoinToWalletAddresses(wallet_addr string, db *db.DB) error {
+func (a *Airdrop) SendCoinToWalletAddresses(wallet_addr string, db *db.DB, def bool) error {
 	//  if the address count is at max yet
 	// if len(a.WhiteList) > a.MaxAddrCount && !a.IsExhausted {
 
@@ -68,7 +68,11 @@ func (a *Airdrop) SendCoinToWalletAddresses(wallet_addr string, db *db.DB) error
 		coinsPerAddress := COINS_PER_ADDRESS
 
 		// for _, addr := range a.WhiteList {
-		a.Balances[wallet_addr] = uint(coinsPerAddress)
+		if def{
+			a.Balances[wallet_addr] = 0
+		}else{
+			a.Balances[wallet_addr] = uint(coinsPerAddress)
+		}
 		// }
 		// Decrement a.ToShare by the total coins distributed
 		totalCoinsDistributed := uint(coinsPerAddress) 
