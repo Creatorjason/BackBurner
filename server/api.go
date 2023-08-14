@@ -209,7 +209,7 @@ func (s *Server) handleSendCoins(c *gin.Context) {
 
 func (s *Server) handleViewBlockchain(c *gin.Context) {
 	if len(s.Cor.Blockchain.Chain) > 0{
-		c.JSON(http.StatusOK, s.Cor.Blockchain)
+		c.IndentedJSON(http.StatusOK, s.Cor.Blockchain)
 		return
 	}
 	c.JSON(http.StatusInternalServerError, gin.H{
