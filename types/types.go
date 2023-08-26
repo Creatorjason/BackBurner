@@ -26,7 +26,7 @@ type (
 		Receiver string `json:"receiver"`
 		Amount   int    `json:"amount"`
 		// Desc - describes the transaction
-		Desc string `json:"desc, omitempty"`
+		Desc string `json:"desc,omitempty"`
 	}
 )
 

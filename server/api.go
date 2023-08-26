@@ -154,7 +154,7 @@ func (s *Server) handleSendCoins(c *gin.Context) {
 	handleBadRequestDueToWrongDataType(err, "Transaction", c)
 
 	// test transaction creation
-	trx := bc.CreateTransaction(transaction.Sender, transaction.Receiver, transaction.Amount)
+	trx := bc.CreateTransaction(transaction.Sender, transaction.Receiver, transaction.Desc,transaction.Amount)
 	// check balance of user
 	senderAcct, err := s.DB.Read([]byte(transaction.Sender))
 	if err != nil {

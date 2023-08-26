@@ -71,15 +71,16 @@ func GetMerkleRoot(trxs []Transaction) []byte {
 	return mTree.MerkleRoot()
 }
 
-func CreateTransaction(from, to string, amount int) Transaction {
+func CreateTransaction(from, to, desc string, amount int) Transaction {
 	// Hash of transaction data
 	trx := Transaction{
 		SenderAddr:   from,
 		ReceiverAddr: to,
 		Amount:       amount,
+		Desc: desc,
 	}
 	amountStr := strconv.Itoa(amount)
-	b := bytes.Join([][]byte{[]byte(from), []byte(to), []byte(amountStr)}, []byte{})
+	b := bytes.Join([][]byte{[]byte(from), []byte(to), []byte(amountStr),[]byte(desc)}, []byte{})
 	hash := sha256.Sum256(b)
 	trx.ID = hex.EncodeToString(hash[:])
 	return trx
