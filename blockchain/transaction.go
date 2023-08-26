@@ -17,6 +17,7 @@ type (
 		SenderAddr   string
 		ReceiverAddr string
 		Amount       int
+		Desc string
 	}
 	// Simplifying this for now, since am not dealing with UTXOs
 	// TxInputs struct {
