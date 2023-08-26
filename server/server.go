@@ -43,6 +43,7 @@ func (s *Server) RunServer() {
 	s.Router.POST("/api/airdrop", s.handleReceiveAirdrop)
 	// Work on this later, wrong endpoint handler
 	s.Router.GET("/api/airdrop", s.handleGetBalanceOfWhitelistedAddresses)
+	s.Router.GET("/api/esco-drop", s.handleInitializeESCO)
 	// Adding CORS
 	
 

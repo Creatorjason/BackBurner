@@ -79,6 +79,21 @@ func (s *Server) handleGenerateNewWallet(c *gin.Context) {
 	}
 
 }
+func (s *Server) handleInitializeESCO(c *gin.Context){
+	// generate new wallet
+	newWallet := wallet.NewWallet()
+	writeErr := s.DB.Write([]byte("Royal Power Energy"), newWallet.SerializeWallet())
+	if writeErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to write wallet data to db",
+		})
+		return 
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"esco_wallet_address": newWallet.Addr,
+	})
+
+}
 
 func (s *Server) handleReceiveAirdrop(c *gin.Context) {
 	var (

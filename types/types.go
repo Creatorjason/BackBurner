@@ -20,11 +20,13 @@ type (
 	// chain of responsibility
 	// CoR struct holds all the components that will be involved in the
 	// processing of an array of transaction
-	
+
 	Transaction struct {
 		Sender   string `json:"sender"`
 		Receiver string `json:"receiver"`
 		Amount   int    `json:"amount"`
+		// Desc - describes the transaction
+		Desc string `json:"desc, omitempty"`
 	}
 )
 
@@ -34,8 +36,6 @@ func NewUserAccount(wallet_addr string, balance uint) *UserAccount {
 		Balance:    balance,
 	}
 }
-
-
 
 // move later
 func (ua *UserAccount) Serialize() []byte {
