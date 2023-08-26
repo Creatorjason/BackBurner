@@ -89,6 +89,7 @@ func (s *Server) handleInitializeESCO(c *gin.Context){
 		})
 		return 
 	}
+	s.AirDrop.SendCoinToWalletAddresses(newWallet.Addr, s.DB, true)
 	c.JSON(http.StatusOK, gin.H{
 		"esco_wallet_address": newWallet.Addr,
 	})
